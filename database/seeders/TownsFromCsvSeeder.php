@@ -29,7 +29,7 @@ class TownsFromCsvSeeder extends Seeder
                     continue; // Skip rows that don't have the required number of columns
                 }
                 // Clean up and ignore empty lines (or malformed rows)
-                if (empty($row[0]) || empty($row[1]) || empty($row[2]) || trim($row[0]) == "Postal Code
+                if (empty($row[0]) || empty($row[1]) || trim($row[0]) == "Postal Code
                 Irányítószám" || trim($row[1]) == "Place Name
                 Település" || trim($row[2]) == "County
                 Megye") {
@@ -42,7 +42,7 @@ class TownsFromCsvSeeder extends Seeder
                 $countyName = trim($row[2]);
 
                 // Skip the row if it contains any unexpected blank fields
-                if (empty($row[0]) || empty($row[1]) || empty($row[2]) || 
+                if (empty($row[0]) || empty($row[1]) || 
                     $this->isHeaderRow($row)) {
                     continue; // Skip empty rows or malformed data
                 }
