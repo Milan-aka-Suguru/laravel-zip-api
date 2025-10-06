@@ -1,8 +1,9 @@
 <?php
 
 namespace Database\Seeders;
-use App\Models\Counties;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
+use App\Models\Counties;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,11 +13,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        // Counties::factory()
-        //     ->count(10)
-        //     ->hasTowns(5) // Each county gets 5 towns
-        //     ->create();
+        User::factory() ->create([
+            'name' => 'Test',
+            'email' => 'test@example.com',
+            'password' => 'asd',
+        ]);
+        
     }
 }
