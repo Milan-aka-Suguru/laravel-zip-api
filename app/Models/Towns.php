@@ -11,6 +11,7 @@ class Towns extends Model
 
     public function county()
     {
-        return $this->belongsTo(County::class);
+        return $this->belongsTo(Counties::class);
     }
+    
 }

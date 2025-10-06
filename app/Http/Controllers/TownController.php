@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Models\Towns;
 use Illuminate\Http\Request;
 
@@ -54,20 +53,28 @@ class TownController extends Controller
     // GET /api/towns/show?name=Kaposvár or ?id=5 or ?zip_code=7400
     public function show(Request $request)
     {
-        $town = null;
-
+        $query = Towns::query();
+    
         if ($request->has('id')) {
-            $town = Towns::find($request->id);
-        } elseif ($request->has('name')) {
-            $town = Towns::where('name', $request->name)->first();
-        } elseif ($request->has('zip_code')) {
-            $town = Towns::where('zip_code', $request->zip_code)->first();
+            $query->where('id', $request->id);
         }
-
-        if (!$town) {
-            return response()->json(['message' => 'Town not found'], 404);
+    
+        if ($request->has('name')) {
+            $query->where('name', $request->name);
         }
-
-        return response()->json(['town' => $town]);
+    
+        if ($request->has('zip_code')) {
+            $query->where('zip_code', $request->zip_code);
+        }
+    
+        $towns = $query->get();
+    
+        if ($towns->isEmpty()) {
+            return response()->json(['message' => 'No towns found'], 404);
+        }
+    
+        return response()->json(['towns' => $towns]);
     }
+    
+
 }
