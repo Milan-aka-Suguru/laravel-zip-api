@@ -56,18 +56,18 @@ class TownController extends Controller
         $lookupType = $request->header('Lookup-Type', 'id'); 
     
         if ($lookupType === 'name') {
-            $town = Towns::where('name','LIKE', $id)->get();
+            $towns = Towns::where('name','LIKE', $id)->get();
         } elseif ($lookupType === 'zip_code') {
-            $town = Towns::where('zip_code', $id)->get();
+            $towns = Towns::where('zip_code', $id)->get();
         } else {
-            $town = Towns::where('id',$id)->get();
+            $towns = Towns::where('id',$id)->get();
         }
     
-        if (!$town) {
+        if (!$towns) {
             return response()->json(['message' => 'Town not found'], 404);
         }
     
-        return response()->json(['town' => $town]);
+        return response()->json(['town' => $towns]);
     }
     
     
