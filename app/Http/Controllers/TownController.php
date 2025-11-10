@@ -50,31 +50,26 @@ class TownController extends Controller
         return response()->json(['message' => 'Town deleted']);
     }
 
-    // GET /api/towns/show?name=Kaposvár or ?id=5 or ?zip_code=7400
-    public function show(Request $request)
+    // GET /api/towns/3?Lookup-Type=id 
+    public function show(Request $request, $id)
     {
-        $query = Towns::query();
+        $lookupType = $request->header('Lookup-Type', 'id'); 
     
-        if ($request->has('id')) {
-            $query->where('id', $request->id);
+        if ($lookupType === 'name') {
+            $town = Towns::where('name','LIKE', $id)->get();
+        } elseif ($lookupType === 'zip_code') {
+            $town = Towns::where('zip_code', $id)->get();
+        } else {
+            $town = Towns::where('id',$id)->get();
         }
     
-        if ($request->has('name')) {
-            $query->where('name', $request->name);
+        if (!$town) {
+            return response()->json(['message' => 'Town not found'], 404);
         }
     
-        if ($request->has('zip_code')) {
-            $query->where('zip_code', $request->zip_code);
-        }
-    
-        $towns = $query->get();
-    
-        if ($towns->isEmpty()) {
-            return response()->json(['message' => 'No towns found'], 404);
-        }
-    
-        return response()->json(['towns' => $towns]);
+        return response()->json(['town' => $town]);
     }
+    
     
 
 }

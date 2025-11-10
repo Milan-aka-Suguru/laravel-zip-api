@@ -50,21 +50,20 @@ class CountyController extends Controller{
         return response()->json(['message' => 'County deleted']);
     }
 
-    // GET /api/counties/show?name=Somogy or /api/counties/show?id=3
-    public function show(Request $request)
+    public function show(Request $request, $id)
     {
-        $county = null;
-
-        if ($request->has('id')) {
-            $county = Counties::find($request->id);
-        } elseif ($request->has('name')) {
-            $county = Counties::where('name', $request->name)->first();
+        $lookupType = $request->header('Lookup-Type', 'id');         
+        if ($lookupType === 'name') {
+            $counties = Counties::where('name','LIKE', $id)->get();
+        } else {
+            $counties = Counties::where('id',$id)->get();
         }
-
-        if (!$county) {
+    
+        if (!$counties) {
             return response()->json(['message' => 'County not found'], 404);
         }
-
-        return response()->json(['county' => $county]);
+    
+        return response()->json(['county' => $counties]);
     }
+    
 }
