@@ -1,11 +1,13 @@
 <?php
 
 namespace Database\Seeders;
+
 use App\Models\Counties;
 use App\Models\Towns;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class TownsFromCsvSeeder extends Seeder
 {
@@ -14,63 +16,72 @@ class TownsFromCsvSeeder extends Seeder
         $csvFilePath = storage_path('app/iranyitoszamok.csv');
 
         if (($handle = fopen($csvFilePath, 'r')) !== false) {
-            
-            fgetcsv($handle, 1000, ';'); 
+            // Count total rows first (for progress bar max)
+            $totalRows = 0;
+            while (fgetcsv($handle, 1000, ';') !== false) {
+                $totalRows++;
+            }
+            rewind($handle);
 
-            while (($row = fgetcsv($handle,1000, ';')) !== false) {
-                $row = array_map(function($value) {
-                    return trim(preg_replace("/\r|\n/", "", $value)); 
+            // Skip header
+            fgetcsv($handle, 1000, ';');
+
+            $output = new ConsoleOutput();
+            $progressBar = new ProgressBar($output, $totalRows);
+            $progressBar->start();
+
+            while (($row = fgetcsv($handle, 1000, ';')) !== false) {
+                $row = array_map(function ($value) {
+                    return trim(preg_replace("/\r|\n/", "", $value));
                 }, $row);
-                if (count($row) < 3) {
-                    continue; 
-                }
-                if (empty($row[0]) || empty($row[1]) || trim($row[0]) == "Postal Code
-                Irányítószám" || trim($row[1]) == "Place Name
-                Település" || trim($row[2]) == "County
-                Megye") {
-                    continue; 
+
+                if (count($row) < 3 || $this->isHeaderRow($row)) {
+                    $progressBar->advance();
+                    continue;
                 }
 
                 $zipCode = trim($row[0]);
                 $townName = trim($row[1]);
                 $countyName = trim($row[2]);
 
-                if (empty($row[0]) || empty($row[1]) || 
-                    $this->isHeaderRow($row)) {
-                    continue; 
+                if (empty($zipCode) || empty($townName)) {
+                    $progressBar->advance();
+                    continue;
                 }
 
-                $county = Counties::firstOrCreate(
-                    ['name' => $countyName]
-                );
+                $county = Counties::firstOrCreate(['name' => $countyName]);
 
                 Towns::create([
                     'name' => $townName,
                     'zip_code' => $zipCode,
                     'county_id' => $county->id,
                 ]);
+
+                $progressBar->advance();
             }
 
             fclose($handle);
+            $progressBar->finish();
+            $output->writeln("\nSeeding completed!");
         } else {
             Log::error("Could not open the CSV file at path: {$csvFilePath}");
         }
     }
+
     private function isHeaderRow($row)
-{
-    $headerValues = [
-        'Postal Code' => 0,
-        'Place Name' => 1,
-        'County' => 2,
-    ];
+    {
+        $headerValues = [
+            'Postal Code' => 0,
+            'Place Name' => 1,
+            'County' => 2,
+        ];
 
-    foreach ($headerValues as $header => $index) {
-        if (stripos($row[$index], $header) !== false) {
-            return true;
+        foreach ($headerValues as $header => $index) {
+            if (stripos($row[$index], $header) !== false) {
+                return true;
+            }
         }
+
+        return false;
     }
-
-    return false;
 }
-} 
-

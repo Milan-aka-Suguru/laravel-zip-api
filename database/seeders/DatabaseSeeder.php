@@ -14,11 +14,10 @@ class DatabaseSeeder extends Seeder
     //"php artisan db:seed" és "php artisan db:seed --class:TownsFromCsvSeeder" -t kell használni, mivel valamiért a towns feltöltés nem akar működni ¯\_(ツ)_/¯
     public function run(): void
     {
-        User::factory() ->create([
-            'name' => 'Test',
-            'email' => 'test@example.com',
-            'password' => 'asd',
-        ]);
+        // Run the UserSeeder
+        $this->call(UserSeeder::class);
 
+        // Run the TownsFromCsvSeeder
+        $this->call(TownsFromCsvSeeder::class);
     }
 }
