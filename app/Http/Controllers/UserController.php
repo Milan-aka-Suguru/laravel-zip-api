@@ -11,6 +11,14 @@ use Laravel\Pail\ValueObjects\Origin\Console;
 
 class UserController extends Controller
 {
+    /**
+ * @api {post} /users/login Bejelentkezés
+ * @apiName UserLogin
+ * @apiGroup Felhasználó
+ * @apiParam {String} email A felhasználó e-mail címe
+ * @apiParam {String} password A felhasználó jelszava
+ * @apiSuccess {String} token Hitelesítési token
+ */
     public function login(Request $request){
         $email = $request->input('email');
         $password = $request->input('password');
@@ -33,6 +41,13 @@ class UserController extends Controller
         ]);
         
     }
+    /**
+ * @api {get} /users Felhasználók listázása
+ * @apiName ListUsers
+ * @apiGroup Felhasználó
+ * @apiHeader {String} Authorization Bearer token (Sanctum)
+ * @apiSuccess {Object[]} users A felhasználók listája
+ */
     public function index(){
         $users = User::all();
         return response()->json(['users'=>$users]);

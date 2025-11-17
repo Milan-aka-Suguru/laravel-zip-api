@@ -8,14 +8,14 @@ use App\Http\Controllers\TownController;
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/counties', [CountyController::class, 'store']);
     Route::put('/counties/{id}', [CountyController::class, 'update']);
-    Route::patch('/counties/{id}', [CountyController::class, 'update']);
+    // Route::patch('/counties/{id}', [CountyController::class, 'update']);
     Route::delete('/counties/{id}', [CountyController::class, 'destroy']);
     Route::get('/counties/{id}', [CountyController::class, 'show']);
 });
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/towns', [TownController::class, 'store']);
     Route::put('/towns/{id}', [TownController::class, 'update']);
-    Route::patch('/towns/{id}', [TownController::class, 'update']);
+    // Route::patch('/towns/{id}', [TownController::class, 'update']);
     Route::delete('/towns/{id}', [TownController::class, 'destroy']);
     Route::get('/towns/{id}', [TownController::class, 'show']);
 });
