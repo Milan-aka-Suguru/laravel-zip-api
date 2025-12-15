@@ -287,13 +287,13 @@ export default function Index({ auth }) {
         <td className="border px-4 py-2">{town.name}</td>
         <td className="border px-4 py-2 flex gap-2">
           <button
-            onClick={() => handleEditCounty(town)}
+            onClick={() => handleEditTown(town)}
             className="bg-yellow-500 text-white px-2 py-1 rounded"
           >
             Módosítás
           </button>
           <button
-            onClick={() => handleDeleteCounty(town.id)}
+            onClick={() => handleDeleteTown(town.id)}
             className="bg-red-500 text-white px-2 py-1 rounded"
           >
             Törlés
