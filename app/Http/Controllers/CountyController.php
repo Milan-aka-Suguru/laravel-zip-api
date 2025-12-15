@@ -86,20 +86,31 @@ class CountyController extends Controller{
  * @apiSuccess {Number} id A megye azonosítója
  * @apiSuccess {String} name A megye neve
  */
-    public function show(Request $request, $id)
-    {
-        $lookupType = $request->header('Lookup-Type', 'id');         
-        if ($lookupType === 'name') {
-            $counties = Counties::where('name','LIKE', $id)->get();
+public function show(Request $request, $id)
+{
+    $lookupType = $request->header('Lookup-Type', null);         
+    if (!$lookupType) {
+        // autodetect
+        if (is_numeric($id)) {
+            $lookupType = 'id';
         } else {
-            $counties = Counties::where('id',$id)->get();
+            $lookupType = 'name';
         }
-    
-        if (!$counties) {
-            return response()->json(['message' => 'County not found'], 404);
-        }
-    
-        return response()->json(['county' => $counties]);
     }
+    if ($lookupType === 'name') {
+        // kisbetűs összehasonlítás, szóköz eltávolítás
+        $search = strtolower(trim($id));
+        $counties = Counties::whereRaw('LOWER(name) LIKE ?', ['%' . $search . '%'])->get();
+    } else {
+        $counties = Counties::where('id', $id)->get();
+    }
+
+    if ($counties->isEmpty()) {
+        return response()->json(['message' => 'County not found'], 404);
+    }
+
+    return response()->json(['county' => $counties]);
+}
+
     
 }

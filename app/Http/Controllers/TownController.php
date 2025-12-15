@@ -90,10 +90,18 @@ class TownController extends Controller
     // GET /api/towns/3?Lookup-Type=id 
     public function show(Request $request, $id)
     {
-        $lookupType = $request->header('Lookup-Type', 'id'); 
-    
+        $lookupType = $request->header('Lookup-Type', null); 
+        if (!$lookupType) {
+            // autodetect
+            if (is_numeric($id)) {
+                $lookupType = 'id';
+            } else {
+                $lookupType = 'name';
+            }
+        }
         if ($lookupType === 'name') {
-            $towns = Towns::where('name','LIKE', $id)->get();
+            $search = strtolower(trim($id));
+            $towns = Towns::whereRaw('LOWER(name) LIKE ?', ['%' . $search . '%'])->get();
         } elseif ($lookupType === 'zip_code') {
             $towns = Towns::where('zip_code', $id)->get();
         } else {
