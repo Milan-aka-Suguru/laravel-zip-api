@@ -71,7 +71,6 @@ export default function Index({ auth }) {
             body: JSON.stringify({ name: newName })
           });
           const data = await res.json();
-          // update local state
           setCounties(counties.map(c => c.id === county.id ? data.county : c));
         } catch (err) {
           console.error(err);
@@ -89,7 +88,6 @@ export default function Index({ auth }) {
               "Accept": "application/json"
             }
           });
-          // remove from local state
           setCounties(counties.filter(c => c.id !== id));
         } catch (err) {
           console.error(err);
@@ -111,7 +109,6 @@ export default function Index({ auth }) {
             body: JSON.stringify({ name: newName })
           });
           const data = await res.json();
-          // update local state
           setCounties(counties.map(c => c.id === county.id ? data.county : c));
         } catch (err) {
           console.error(err);
@@ -129,7 +126,6 @@ export default function Index({ auth }) {
               "Accept": "application/json"
             }
           });
-          // remove from local state
           setCounties(counties.filter(c => c.id !== id));
         } catch (err) {
           console.error(err);

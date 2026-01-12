@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useForm } from '@inertiajs/react';
+import { jsPDF } from "jspdf";
+import autoTable from 'jspdf-autotable';
+
 
 export default function Index({ auth }) {
+
+
     const { post } = useForm();
     const [towns, setTowns] = useState([]);
     const [counties, setCounties] = useState([]);
@@ -24,7 +29,28 @@ export default function Index({ auth }) {
     const handleLogout = () => {
         post('/logout');
     };
-
+    const exportPDF = (rows, filename, columns = ["ID", "Name"]) => {
+      if (!rows || rows.length === 0) return;
+    
+      const doc = new jsPDF();
+    
+      const data = rows.map(r => columns.map(col => r[col.toLowerCase()] ?? ''));
+    
+      doc.setFontSize(16);
+      doc.text("Export", 14, 20);
+    
+      autoTable(doc, {
+        head: [columns],
+        body: data,
+        startY: 30,
+        styles: { fontSize: 10 },
+        headStyles: { fillColor: [41, 128, 185] }, 
+      });
+    
+      doc.save(filename);
+    };
+    
+  
     const exportCSV = (rows, filename, delimiter = ';') => {
         if (!rows || rows.length === 0) return;
 
@@ -210,6 +236,14 @@ export default function Index({ auth }) {
                 >
                     Export CSV
                 </button>
+                <button
+                onClick={() => exportPDF(counties, 'counties.pdf')}
+                className="bg-purple-500 text-white px-3 py-1 rounded"
+                disabled={counties.length === 0}
+            >
+                Export PDF
+            </button>
+
             </div>
             <table className="border-collapse border border-gray-300 w-full">
   <thead>
@@ -267,6 +301,14 @@ export default function Index({ auth }) {
                 >
                     Export CSV
                 </button>
+                <button
+                onClick={() => exportPDF(towns, 'towns.pdf')}
+                className="bg-purple-500 text-white px-3 py-1 rounded"
+                disabled={towns.length === 0}
+            >
+                Export PDF
+            </button>
+
             </div>
             <table className="border-collapse border border-gray-300 w-full">
   <thead>
